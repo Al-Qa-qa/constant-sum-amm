@@ -94,7 +94,31 @@ contract CSAMM {
 
     // Transfer token In
     tokenIn.transferFrom(msg.sender, address(this), _amountIn);
-    uint256 amountIn = tokenIn.balanceOf(address(this)) - resIn; // This should be equal to `_amountIn` value
+
+    /*
+      x + y = k     ->  (resIn + resOut = k)
+      dx + dy = s   ->  (amountIn + amountOut = shares)
+
+      (x + y) / k = (dx + dy) / s
+      x / k + y / k = dx / s + dy / s
+      
+      We will make an approximation...
+      
+      x / k = dx / s          ||  y / k = dy / s
+      s = (dx * k) / x  (1)   || dy = (s * y) / k  (2) 
+
+      Subistitite (1) in (2)
+
+      dy = (((dx * k) / x) * y) / k
+      dy = (dx * y) / x
+
+      amountOut = (amountIn * reserveOut) / reserveIn
+
+      #..................
+    
+    */
+
+    uint256 amountIn = tokenIn.balanceOf(address(this)) - resIn; // This can be equal to `_amountIn` value
 
     // Calculate amount out + our fees (0.5% fee)
     uint256 amountInWithFees = (amountIn * 995) / 1000;
